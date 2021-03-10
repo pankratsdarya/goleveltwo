@@ -1,13 +1,17 @@
 package main
 
 import (
-	"fmt"
+	"os"
+	"runtime/trace"
 	"sync"
 )
 
 const count = 1000
 
 func main() {
+	trace.Start(os.Stdout)
+	defer trace.Stop()
+
 	var (
 		counter int
 		mu      sync.Mutex
@@ -25,8 +29,8 @@ func main() {
 		}()
 	}
 
-	fmt.Println("Wait for it")
+	//fmt.Println("Wait for it")
 	wg.Wait()
 
-	fmt.Println(counter)
+	//fmt.Println(counter)
 }
