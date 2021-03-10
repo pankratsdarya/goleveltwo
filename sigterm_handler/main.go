@@ -11,20 +11,25 @@ import (
 
 func main() {
 	fmt.Println("app starting")
-
-	wasSignal := false
+	wasSignal, cancelSignal := context.WithCancel(context.Background())
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		for !wasSignal {
-			fmt.Println("awaiting signal")
-			time.Sleep(500 * time.Millisecond)
+		for {
+			select {
+			case <-wasSignal.Done():
+				return
+			default:
+				fmt.Println("awaiting signal")
+				time.Sleep(500 * time.Millisecond)
+			}
+
 		}
 	}()
 
 	sig := <-sigs
-	wasSignal = true
+	cancelSignal()
 	fmt.Println(sig)
 	fmt.Println("shutting down")
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
