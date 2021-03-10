@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	var workers = make(chan struct{}, 100)
+	var workers = make(chan struct{}, 1)
 	countNum := 0
 
 	for i := 1; i <= 1000; i++ {
